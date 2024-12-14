@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ibo_clone/app/const/appColors.dart';
+import 'package:ibo_clone/app/widgets/hide_live_categories.dart';
+import 'package:ibo_clone/app/widgets/hide_series_categories.dart';
+import 'package:ibo_clone/app/widgets/live_channel_sort.dart';
+import 'package:ibo_clone/app/widgets/my_button_widget.dart';
 import 'package:ibo_clone/app/widgets/my_text_widget.dart';
+import 'package:ibo_clone/app/widgets/select_language.dart';
 import 'package:sizer/sizer.dart'; // For responsive design
 
+import '../../../const/spaces.dart';
+import '../../../widgets/add_playlist_dialog.dart';
+import '../../../widgets/hide_vode_categorie.dart';
+import '../../../widgets/layout.dart';
+import '../../../widgets/parantal_control.dart';
 import '../controllers/settings_controller.dart';
 
 class SettingsView extends GetView<SettingsController> {
@@ -12,26 +22,23 @@ class SettingsView extends GetView<SettingsController> {
   @override
   Widget build(BuildContext context) {
     final List<Map<String, dynamic>> settingsOptions = [
-      {'icon': Icons.playlist_add, 'label': 'Add Playlist'},
-      {'icon': Icons.lock, 'label': 'Parental Control'},
-      {'icon': Icons.playlist_play, 'label': 'Change Playlist'},
-      {'icon': Icons.language, 'label': 'Change Language'},
-      {'icon': Icons.view_module, 'label': 'Change Layout'},
-      {'icon': Icons.visibility_off, 'label': 'Hide Live Categories'},
-      {'icon': Icons.visibility_off, 'label': 'Hide Vod Categories'},
-      {'icon': Icons.visibility_off, 'label': 'Hide Series Categories'},
-      {'icon': Icons.history, 'label': 'Clear History Channels'},
-      {'icon': Icons.history, 'label': 'Clear History Movies'},
-      {'icon': Icons.history, 'label': 'Clear History Series'},
-      {'icon': Icons.sort, 'label': 'Live Channel Sort'},
-      {'icon': Icons.tv, 'label': 'Live Stream Format'},
-      {'icon': Icons.videocam, 'label': 'Change Player'},
-      {'icon': Icons.open_in_new, 'label': 'External Players'},
-      {'icon': Icons.settings_backup_restore, 'label': 'Automatic'},
-      {'icon': Icons.access_time, 'label': 'Time Format'},
-      {'icon': Icons.subtitles, 'label': 'Subtitle Settings'},
-      {'icon': Icons.devices, 'label': 'Select Device Type'},
-      {'icon': Icons.update, 'label': 'Update Now'},
+      {'icon': Icons.playlist_add, 'label': 'Add Playlist', 'onTap': () => _showAddPlaylistDialog(context)},
+      {'icon': Icons.lock, 'label': 'Parental Control', 'onTap': () => _showParentalControlDialog(context)},
+      {'icon': Icons.playlist_play, 'label': 'Change Playlist', 'onTap': () => Get.toNamed('/playlists')},
+      {'icon': Icons.language, 'label': 'Change Language', 'onTap': () => _showChangeLanguageDialog(context)},
+      {'icon': Icons.view_module, 'label': 'Change Layout', 'onTap': () => _showLayoutDialog(context)},
+      {'icon': Icons.visibility_off, 'label': 'Hide Live Categories', 'onTap': () => _showHideCategoriesDialog(context, 'Live Categories')},
+      {'icon': Icons.visibility_off, 'label': 'Hide Vod Categories', 'onTap': () => _showVodCategoriesDialog(context, 'VOD Categories')},
+      {'icon': Icons.visibility_off, 'label': 'Hide Series Categories', 'onTap': () => _showSeriesCategoriesDialog(context, 'Series Categories')},
+      {'icon': Icons.sort, 'label': 'Live Channel Sort', 'onTap': () => _showLiveChannelSortDialog(context)},
+      {'icon': Icons.history, 'label': 'Clear History Channels', 'onTap': () => Get.snackbar('Clear History', 'Channels history cleared!')},
+      {'icon': Icons.history, 'label': 'Clear History Movies', 'onTap': () => Get.snackbar('Clear History', 'Movies history cleared!')},
+      {'icon': Icons.history, 'label': 'Clear History Series', 'onTap': () => Get.snackbar('Clear History', 'Series history cleared!')},
+      {'icon': Icons.settings_backup_restore, 'label': 'Automatic', 'onTap': () => Get.snackbar('Automatic', 'Settings updated automatically!')},
+      {'icon': Icons.access_time, 'label': 'Time Format', 'onTap': () => Get.snackbar('Time Format', 'Updated to 24-hour format!')},
+      {'icon': Icons.subtitles, 'label': 'Subtitle Settings', 'onTap': () => Get.toNamed('/subtitleSettings')},
+      {'icon': Icons.devices, 'label': 'Select Device Type', 'onTap': () => Get.toNamed('/selectDeviceType')},
+      {'icon': Icons.update, 'label': 'Update Now', 'onTap': () => Get.snackbar('Update', 'Application is up to date!')},
     ];
 
     return Scaffold(
@@ -61,7 +68,7 @@ class SettingsView extends GetView<SettingsController> {
             Expanded(
               child: GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 4, // Four columns as in the image
+                  crossAxisCount: 4, // Four columns
                   crossAxisSpacing: 1.w,
                   mainAxisSpacing: 1.h,
                   childAspectRatio: 1.h, // Adjust for grid proportions
@@ -72,10 +79,7 @@ class SettingsView extends GetView<SettingsController> {
                   return _buildSettingsOption(
                     icon: option['icon'],
                     label: option['label'],
-                    onTap: () {
-                      // Action for each button
-                      print('${option['label']} tapped');
-                    },
+                    onTap: option['onTap'],
                   );
                 },
               ),
@@ -86,12 +90,13 @@ class SettingsView extends GetView<SettingsController> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   MyText(
-                    text: 'Mac Address: 11:f4:ef:08:6f:ba',
-                color: Colors.white, size: 14.sp),
-
+                      text: 'Mac Address: 11:f4:ef:08:6f:ba',
+                      color: Colors.white,
+                      size: 14.sp),
                   MyText(
-                    text:'Device Key: 278281',
-                    color: Colors.white, size: 14.sp,
+                    text: 'Device Key: 278281',
+                    color: Colors.white,
+                    size: 14.sp,
                   ),
                 ],
               ),
@@ -131,6 +136,62 @@ class SettingsView extends GetView<SettingsController> {
           ],
         ),
       ),
+    );
+  }
+
+  void _showAddPlaylistDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => const AddPlaylistDialog(),
+    );
+  }
+
+  void _showParentalControlDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => const ParantalControl(),
+    );
+  }
+
+  void _showChangeLanguageDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => const SelectLanguage(),
+    );
+  }
+
+  void _showLayoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => Selectlayout()
+    );
+  }
+
+  void _showHideCategoriesDialog(BuildContext context, String categoryType) {
+    showDialog(
+      context: context,
+      builder: (context) =>HideLiveCategories(),
+    );
+  }
+
+  void _showVodCategoriesDialog(BuildContext context, String categoryType) {
+    showDialog(
+      context: context,
+      builder: (context) =>HideVodeCategories(),
+    );
+  }
+
+  void _showSeriesCategoriesDialog(BuildContext context, String categoryType) {
+    showDialog(
+      context: context,
+      builder: (context) =>HideSeriesCategories(),
+    );
+  }
+
+  void _showLiveChannelSortDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => LiveChannelSort(),
     );
   }
 }

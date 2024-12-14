@@ -4,6 +4,7 @@ import 'package:ibo_clone/app/widgets/common_image_view_widget.dart';
 import 'package:ibo_clone/app/widgets/my_text_widget.dart';
 import 'package:sizer/sizer.dart';
 import '../../../const/appColors.dart';
+import '../../../widgets/add_playlist_dialog.dart';
 import '../../../widgets/my_button_widget.dart';
 import '../../../widgets/my_text_field_widget.dart';
 import '../../../widgets/playlists.dart';
@@ -81,7 +82,12 @@ class PlaylistsView extends GetView<PlaylistsController> {
                           // The last grid item is the "+" button with text
                           return GestureDetector(
                             onTap: () {
-                              _showAddPlaylistDialog(context);
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AddPlaylistDialog();
+                                },
+                              );
                             },
                             child: Container(
                               width: double.infinity,
@@ -145,57 +151,6 @@ class PlaylistsView extends GetView<PlaylistsController> {
     );
   }
 
-  // Method to show the Add Playlist dialog
-  void _showAddPlaylistDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: Colors.black87,
-          surfaceTintColor: Colors.white,
-          title: MyText(
-            text: 'Add Playlist',
-            color: Colors.white,
-            textAlign: TextAlign.center,
-          ),
-          content: SingleChildScrollView(
-            // Wrap the content with SingleChildScrollView
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                MyTextField(
-                  hint: 'Playlist Name',
-                ),
-                SizedBox(height: 2.h),
-                MyTextField(
-                  hint: 'https://play.google.com',
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            BorderButton(
-              width: 10 * 2.w,
-              borderColor: kOrangeColor,
-              textColor: Colors.white,
-              buttonText: 'Cancel',
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            MyButton(
-              backgroundColor: kOrangeColor,
-              width: 10 * 2.w,
-              onTap: () {
-                // Add playlist logic here
-              },
-              buttonText: 'Add Playlist',
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   // Method to show the Playlist Options dialog with Connect, Edit, and Delete buttons
   // Method to show the Playlist Options dialog with Connect, Edit, and Delete buttons
